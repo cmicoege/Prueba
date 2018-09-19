@@ -51,7 +51,7 @@ getDriver().findElementDynamic(searchElement);
 ----
 
 The second one is prefered as it is POM. +
-This method has an implicit wait included in it, unlike Selenium's "findElement", so it will try to wait for the element to show up and if that never happens it will raise an exception after waiting for 20 seconds.
+This method has an implicit wait included in it, unlike Selenium's _findElement_, so it will try to wait for the element to show up and if that never happens it will raise an exception after waiting for 20 seconds.
 
 * Some workable By types:
 ** _By.name(someName)_
@@ -162,7 +162,7 @@ In the HTML, we can see the icon we clicked is inside a button that has a name p
 
 //Image thaistar2
 
-In the previous image you can see that our element has as a property: **name = login**.
+In the previous image you can see that our element has as a property: ``name = login``.
 Therefore we want to look for it like this:
 
 [source, java]
@@ -191,8 +191,8 @@ We are going to make a new method called *clickLoginButton* to click that elemen
   }
 ----
 
-Don't forget adding "private static final By searchLoginButton = By.name("login");" in the line after we declare our Url. +
-The type "ThaiLoginPage" might seem weird, but the reason for it is that after clicking the login button the page raises a dialog for us to enter the credentials. We will treat it as a page and we will make a new class for it, the "ThaiLoginPage" class.
+Don't forget adding ``private static final By searchLoginButton = By.name("login");`` in the line after we declare our Url. +
+The type _ThaiLoginPage_ might seem weird, but the reason for it is that after clicking the login button the page raises a dialog for us to enter the credentials. We will treat it as a page and we will make a new class for it, the _ThaiLoginPage_ class.
 
 At this point, your ThaiHomePage should look like this:
 [source, java]
@@ -272,7 +272,7 @@ Let's make the ThaiLoginPage class. The override methods are these ones:
   }
 ----
 
-The action we want to perform in this page is "enter credentials", so we make a new method:
+The action we want to perform in this page is _enter credentials_, so we make a new method:
 
 [source, java]
 ----
@@ -281,8 +281,8 @@ public void enterCredentials(String username, String password) {
 
 This method takes username and password, enters it in the right places and the clicks submit.
 
-If we inspect the Username input, we can see there is a "Input" web element with name property name = "username". +
-As expected, the password input also has a very descriptive name: name="password".
+If we inspect the Username input, we can see there is a _Input_ web element with name property ``name = "username"``. +
+As expected, the password input also has a very descriptive name: ``name="password"``.
 
 So, if we want to fill those two fields we will need to do:
 
@@ -295,7 +295,7 @@ WebElement usernameTextBox = getDriver().findElementDynamic(usernameSearch);
 WebElement passwordTextBox = getDriver().findElementDynamic(passwordSearch);
 ----
 
-Inspecting the submit button reveals another name property in the button: name = "submitLogin". Then it can be found like this:
+Inspecting the submit button reveals another name property in the button: ``name = "submitLogin"``. Then it can be found like this:
 
 [source, java]
 ----
