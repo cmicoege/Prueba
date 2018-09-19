@@ -1,0 +1,509 @@
+:toc: macro
+toc::[]
+
+= MrChecker E2E Testing
+
+== Introduction
+MrChecker is a testing framework included in devonfw with several useful modules, from which we will focus on the Selenium Module, a module designed to make end-to-end testing easier to implement.
+
+=== End-to-end testing
+End-to-end testing on an application tries to make sure that said application and all its components work as intended, testing it in a real-world scenario, testing UI, frontend and backend by trying to use the whole application's functioning.
+
+But tests take a lot of time to implement and maintain, so it makes perfect sense trying to lighten the process by using a software to create tests.
+
+//=== Need for a test solution framework in devonfw
+
+
+== MrChecker Selenium Module
+
+=== Selenium
+Selenium Webdriver is a software used to make automated end-to-end tests on web applications, and it works by reaching certain elements in the HTML and performing actions like click or check, and therefore navigate through the site to test if it works properly. +
+It can be used by performing all the searches and actions in the same test file or it can be refactored to several classes, one for each page visited in the test, known as Page Object Model.
+
+MrChecker Selenium Module incorporates Selenium Webdriver with some fixes to make it easier to use.
+
+=== How to install MrChecker
+You need to download devon distribution first. If you don't have it yet, you can do it by following the steps in the next link: https://github.com/oasp-forge/devon-guide/wiki/getting-started-download-and-setup
+
+Then you need MyThaiStar project, which contains MrChecker in it. You can download it from https://github.com/oasp/my-thai-star
+
+After you have it all in your computer, you need to import My Thai Star project to devon distribution. This is explained step by step here: https://github.com/oasp-forge/devon-guide/wiki/getting-started-running-sample-application
+
+After following the last tutorial, you will have My Thai Star app running in localhost, so now you have everything you need to start writing Selenium tests using MrChecker to check if My Thai Star works properly.
+
+=== Basics
+* First, we need the **WebDriver object**. In MrChecker's Selenium Module, it can be used by calling the **getDriver()** method. Notice that's it follows java's singleton pattern and only creates one object. This WebDriver object represents the whole navigator and we will call methods on it to find elements in it or interact with those elements.
+
+
+* **findElementDynamic**: Tries to find an element by a speficied criterion. It expects a By object as argument, and returns a WebElement object. It can be used like this:
+
+[source, java]
+----
+getDriver().findElementDynamic(By.someCriterion(criterion));
+----
+
+or
+
+[source, java]
+----
+By searchElement = By.someCriterion(criterion);
+getDriver().findElementDynamic(searchElement);
+----
+
+The second one is prefered as it is POM. +
+This method has an implicit wait included in it, unlike Selenium's "findElement", so it will try to wait for the element to show up and if that never happens it will raise an exception after waiting for 20 seconds.
+
+* Some workable By types:
+** _By.name(someName)_
+** _By.tagName(someTagName)_: For example **By.tagName("div")** or **By.tagName("button")**.
+** _By.className(someClassName)_: For example **By.className("mat-checkbox")**.
+** _By.id(someId)_
+** _By.cssSelector(someCssSelector)_: For example **By.cssSelector("button.mat-icon-button:nth-child(6)")** or **By.cssSelector("input[formcontrolname='email']")**.
+** _By.xpath(someXpath)_: For example: **By.xpath("//button[@class='text-upper property-text-bold mat-button mat-accent']")**.
+
+* _findElementDynamic**s**_: Unlike the previous method, this one returns a list of WebElements. It's useful when two elements share the same class or a certain property and you need to stock both of them. It raises an exception if no elements are found.
+
+* _myWebElement.click()_: It performs a click in the web element specified, as if the user was performing the click.
+
+* _myWebElement.sendKeys(someString)_: It takes a string as argument and tries to type those keys in the web element. It's typically used to fill inputs, but it can be used to send specific keys like *Enter* or *Backspace*, so it can be used to activate a button (by using Enter) like if we were clicking it.
+
+* _myWebElement.getAttribute(attributeName)_: It returns the value of that attribute.
+
+* _myWebElement.getText()_: Returns ALL the text contained in that Web element. If text contained in children isn't wanted, _getAttribute("innerHTML")_ should be used instead.
+
+* _findElementQuietly_: Used in the same way as findElementDynamic, but this one doesn't raise an exception if element isn't found.
+
+* _findElementQuietlys_: Used in the same way as findElementDynamics, but this one doesn't raise an exception if no elements are found.
+
+== How to use MrChecker with My Thai Star web app
+
+=== Where is it?
+MrChecker comes with devonfw distribution, but it's disabled by default. You may enable it by . . .
+
+=== Configuration
+
+=== How to make it work: my first test
+In this section we will make a basic login test for My Thai Star web app. If you followed the My Thai Star tutorial mentioned previously, you should have the app running. +
+Go to *localhost:4200* to check it. If you don't see it, make sure that it's running and that it's in that port.
+
+What we want to do is to log in as an user, with the following credentials:
+
+----
+
+user: user0
+password: password
+
+----
+
+We need an object to represent the page we are in, and since we are in Home page we will first make a new ThaiHomePage java class. This class represents the home page, and it will have methods for all the actions we will do in this page. +
+Our class should also extend the class *BasePage*:
+
+[source, java]
+----
+
+public class ThaiHomePage extends BasePage {
+
+----
+
+Add these imports as well, you will need them:
+
+[source, java]
+----
+package com.example.selenium.pages.mythaistar;
+
+import java.util.List;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebElement;
+
+import com.capgemini.mrchecker.selenium.core.BasePage;
+----
+
+There are some basic methods we have to override from BasePage and make a string with our Url. Add these lines inside the class:
+
+[source, java]
+----
+private static final String mythaistarUrl = localhost:4200;
+
+@Override
+  public boolean isLoaded() {
+
+    if (getDriver().getTitle().equals(pageTitle())) {
+      return true;
+    }
+    return false;
+  }
+
+  @Override
+  public void load() {
+
+    getDriver().get(mythaistarUrl);
+    getDriver().manage().window().maximize();
+  }
+
+  @Override
+  public String pageTitle() {
+
+    return "My Thai Star";
+  }
+
+----
+
+
+
+
+
+Now we need some actual code to fill the class. Right click on the user icon in the top right corner of the screen and inspect the HTML of that element.
+
+//Image thaistar1
+
+In the HTML, we can see the icon we clicked is inside a button that has a name property. You want to try too look for either id (unless it's a dynamic id), name or unique classes, but in practice it tends to get harder and you sometimes have to use Xpath or Css Selector.
+
+//Image thaistar2
+
+In the previous image you can see that our element has as a property: **name = login**.
+Therefore we want to look for it like this:
+
+[source, java]
+----
+getDriver().findElementDynamic(By.name("login"));
+----
+
+But following page object model, you want it to look like this:
+
+[source, java]
+----
+private static final By searchLoginButton = By.id("loginButton");
+getDriver().findElementDynamic(By.id("loginButton"));
+----
+
+We are going to make a new method called *clickLoginButton* to click that element:
+
+[source, java]
+----
+  public ThaiLoginPage clickLogInButton() {
+
+    WebElement loginButton = getDriver().findElementDynamic(loginButtonSearch);
+    loginButton.click();
+
+    return new ThaiLoginPage();
+  }
+----
+
+Don't forget adding "private static final By searchLoginButton = By.name("login");" in the line after we declare our Url. +
+The type "ThaiLoginPage" might seem weird, but the reason for it is that after clicking the login button the page raises a dialog for us to enter the credentials. We will treat it as a page and we will make a new class for it, the "ThaiLoginPage" class.
+
+At this point, your ThaiHomePage should look like this:
+[source, java]
+----
+package com.example.selenium.pages.mythaistar;
+
+import java.util.List;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebElement;
+
+import com.capgemini.mrchecker.selenium.core.BasePage;
+import com.capgemini.mrchecker.selenium.core.exceptions.BFElementNotFoundException;
+
+public class ThaiHomePage extends BasePage {
+
+  private static final String mythaistarUrl = "localhost:4200";
+  private static final By searchLoginButton = By.id("loginButton");
+
+
+  @Override
+  public boolean isLoaded() {
+
+    if (getDriver().getTitle().equals(pageTitle())) {
+      return true;
+    }
+    return false;
+  }
+
+  @Override
+  public void load() {
+
+    getDriver().get(mythaistarUrl);
+    getDriver().manage().window().maximize();
+  }
+
+  @Override
+  public String pageTitle() {
+
+    return "My Thai Star";
+  }
+  
+  public ThaiLoginPage clickLogInButton() {
+
+    WebElement loginButton = getDriver().findElementDynamic(searchLoginButton);
+    loginButton.click();
+
+    return new ThaiLoginPage();
+  }
+
+}
+----
+
+
+Let's make the ThaiLoginPage class. The override methods are these ones:
+
+[source, java]
+----
+  @Override
+  public boolean isLoaded() {
+
+    WebElement usernameTextBox = getDriver().findElementDynamic(passwordSearch);
+    return usernameTextBox.isDisplayed();
+  }
+
+  @Override
+  public void load() {
+
+    BFLogger.logError("MyThaiStar login page was not loaded.");
+  }
+
+  @Override
+  public String pageTitle() {
+
+    return "";
+  }
+----
+
+The action we want to perform in this page is "enter credentials", so we make a new method:
+
+[source, java]
+----
+public void enterCredentials(String username, String password) {
+----
+
+This method takes username and password, enters it in the right places and the clicks submit.
+
+If we inspect the Username input, we can see there is a "Input" web element with name property name = "username". +
+As expected, the password input also has a very descriptive name: name="password".
+
+So, if we want to fill those two fields we will need to do:
+
+[source, java]
+----
+private static final By usernameSearch = By.name("username");
+private static final By passwordSearch = By.name("password");
+
+WebElement usernameTextBox = getDriver().findElementDynamic(usernameSearch);
+WebElement passwordTextBox = getDriver().findElementDynamic(passwordSearch);
+----
+
+Inspecting the submit button reveals another name property in the button: name = "submitLogin". Then it can be found like this:
+
+[source, java]
+----
+private static final By accessButtonSearch = By.name("submitLogin");
+
+WebElement accessButton = getDriver().findElementDynamic(accessButtonSearch);
+----
+
+As usual, copy the By instanciations in the first part of our ThaiLoginPage class, and the WebElement searches inside the method we have just created. +
+After that, you need to send username and password to the proper inputs and click the submit button interacting with the web elements we fetched. It can be done like this:
+
+[source, java]
+----
+usernameTextBox.sendKeys(username);
+passwordTextBox.sendKeys(password);
+accessButton.click();
+----
+
+
+Your ThaiLoginPage should look like this (imports were added too):
+
+[source, java]
+----
+package com.example.selenium.pages.mythaistar;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+import com.capgemini.mrchecker.selenium.core.BasePage;
+import com.capgemini.mrchecker.test.core.logger.BFLogger;
+
+
+public class ThaiLoginPage extends BasePage {
+
+  private static final By usernameSearch = By.name("username");
+
+  private static final By passwordSearch = By.name("password");
+
+  private static final By accessButtonSearch = By.name("submitLogin");
+
+  @Override
+  public boolean isLoaded() {
+
+    WebElement usernameTextBox = getDriver().findElementDynamic(passwordSearch);
+    return usernameTextBox.isDisplayed();
+  }
+
+  @Override
+  public void load() {
+
+    BFLogger.logError("MyThaiStar login page was not loaded.");
+  }
+
+  @Override
+  public String pageTitle() {
+
+    return "";
+  }
+
+  public void enterCredentials(String username, String password) {
+
+    WebElement usernameTextBox = getDriver().findElementDynamic(usernameSearch);
+    WebElement passwordTextBox = getDriver().findElementDynamic(passwordSearch);
+    WebElement accessButton = getDriver().findElementDynamic(accessButtonSearch);
+
+    usernameTextBox.sendKeys(username);
+    passwordTextBox.sendKeys(password);
+
+    accessButton = getDriver().findElementDynamic(accessButtonSearch);
+    accessButton.click();
+  }
+}
+----
+
+After logging in, the page should change to Home page and the login button in there should have changed. To verify that we are logged in, let's make a new method in ThaiHomePage called verifyThatUserIsLogged:
+
+[source, java]
+----
+ public boolean verifyThatUserIsLogged() {
+
+    WebElement userIsLoggedIcon = getDriver().findElementDynamic(searchLogged);
+    boolean userIsLogged = userIsLoggedIcon.isDisplayed();
+    return userIsLogged;
+  }
+----
+Where:
+
+[source, java]
+----
+private static final By searchLogged = By.name("account");
+----
+
+So ThaiHomePage should look like this:
+
+[source, java]
+----
+package com.example.selenium.pages.mythaistar;
+
+import java.util.List;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebElement;
+
+import com.capgemini.mrchecker.selenium.core.BasePage;
+import com.capgemini.mrchecker.selenium.core.exceptions.BFElementNotFoundException;
+
+public class ThaiHomePage extends BasePage {
+
+  private static final String mythaistarUrl = "localhost:4200";
+  private static final By searchLoginButton = By.id("loginButton");
+
+
+  @Override
+  public boolean isLoaded() {
+
+    if (getDriver().getTitle().equals(pageTitle())) {
+      return true;
+    }
+    return false;
+  }
+
+  @Override
+  public void load() {
+
+    getDriver().get(mythaistarUrl);
+    getDriver().manage().window().maximize();
+  }
+
+  @Override
+  public String pageTitle() {
+
+    return "My Thai Star";
+  }
+  
+  public ThaiLoginPage clickLogInButton() {
+
+    WebElement loginButton = getDriver().findElementDynamic(searchLoginButton);
+    loginButton.click();
+
+    return new ThaiLoginPage();
+  }
+
+   public boolean verifyThatUserIsLogged() {
+
+    WebElement userIsLoggedIcon = getDriver().findElementDynamic(searchLogged);
+    boolean userIsLogged = userIsLoggedIcon.isDisplayed();
+    return userIsLogged;
+  }
+}
+----
+
+
+
+After both pages were created, the only part missing is the actual test that calls those pages and their methods. Create a new java class named MyThaiStarTest and copy the following code in it:
+
+[source, java]
+----
+@RunWith(JUnitParamsRunner.class)
+public class MyThaiStarTest extends BaseTest {
+
+  private ThaiHomePage myThaiStarHome = new ThaiHomePage();
+
+  @Override
+  public void setUp() {
+
+    this.myThaiStarHome.load();
+    logOut();
+  }
+
+  @Override
+  public void tearDown() {
+
+    // TASK Auto-generated method stub
+
+  }
+
+  @Test
+  public void Test_login() {
+    User user = new User("user0", "password");
+    login(user);
+
+    boolean userIsLogged = myThaiStarHome.verifyThatUserIsLogged();
+    Assert.assertTrue("User is not logged.", userIsLogged);
+  }
+
+  private void login(User user) {
+
+    ThaiLoginPage loginPage = this.myThaiStarHome.clickLogInButton();
+    loginPage.enterCredentials(user.getUsername(), user.getPassword());
+
+  }
+----
+
+Now you can run your test by running MyThaiStarTest as JUnit, and a browser should open to follow the steps in your test.
+
+
+
+
+== Test examples
+
+=== Example of a more complicated test step by step (1)
+Login and book a table.
+
+=== Example of a more complicated test step by step (2)
+Login and book a table, then login with a waiter and check if the table was successfully booked.
+
+=== Example of a more complicated test step by step (3)
+Login and order food for a certain booked table.
+
