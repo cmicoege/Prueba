@@ -154,17 +154,15 @@ Now we need some actual code to fill the class. Right click on the user icon in 
 
 //Image thaistar1
 .Inspect the login icon.
-[#img-sunset]
-[caption="Figure 1: ",link=www.link1.com]
-image::images/mythaistar1.jpg[userLoginIcon]
+[caption="Figure 1: "]
+image::mythaistar1.jpg[userLoginIcon]
 
 
 In the HTML, we can see the icon we clicked is inside a button that has a name property. You want to try too look for either id (unless it's a dynamic id), name or unique classes, but in practice it tends to get harder and you sometimes have to use Xpath or Css Selector.
 
 //Image thaistar2
 .Look for name property.
-[#img-sunset]
-[caption="Figure 2: ",link=www.link2.com]
+[caption="Figure 2: "]
 image::images/mythaistar2.jpg[LoginNameProperty]
 
 In the previous image you can see that our element has as a property: ``name = login``.
