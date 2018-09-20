@@ -128,11 +128,7 @@ private static final String mythaistarUrl = localhost:4200;
 
 @Override
   public boolean isLoaded() {
-
-    if (getDriver().getTitle().equals(pageTitle())) {
-      return true;
-    }
-    return false;
+    return getDriver().getTitle().equals(pageTitle()));
   }
 
   @Override
@@ -157,10 +153,19 @@ private static final String mythaistarUrl = localhost:4200;
 Now we need some actual code to fill the class. Right click on the user icon in the top right corner of the screen and inspect the HTML of that element.
 
 //Image thaistar1
+.Inspect the login icon.
+[#img-sunset]
+[caption="Figure 1: ",link=www.link1.com]
+image::images/mythaistar1.jpg[userLoginIcon]
+
 
 In the HTML, we can see the icon we clicked is inside a button that has a name property. You want to try too look for either id (unless it's a dynamic id), name or unique classes, but in practice it tends to get harder and you sometimes have to use Xpath or Css Selector.
 
 //Image thaistar2
+.Look for name property.
+[#img-sunset]
+[caption="Figure 2: ",link=www.link2.com]
+image::images/mythaistar2.jpg[LoginNameProperty]
 
 In the previous image you can see that our element has as a property: ``name = login``.
 Therefore we want to look for it like this:
@@ -174,8 +179,8 @@ But following page object model, you want it to look like this:
 
 [source, java]
 ----
-private static final By searchLoginButton = By.id("loginButton");
-getDriver().findElementDynamic(By.id("loginButton"));
+private static final By searchLoginButton = By.name("login");
+getDriver().findElementDynamic(By.name("login"));
 ----
 
 We are going to make a new method called *clickLoginButton* to click that element:
@@ -211,7 +216,7 @@ import com.capgemini.mrchecker.selenium.core.exceptions.BFElementNotFoundExcepti
 public class ThaiHomePage extends BasePage {
 
   private static final String mythaistarUrl = "localhost:4200";
-  private static final By searchLoginButton = By.id("loginButton");
+  private static final By searchLoginButton = By.name("login");
 
 
   @Override
@@ -281,6 +286,11 @@ public void enterCredentials(String username, String password) {
 
 This method takes username and password, enters it in the right places and the clicks submit.
 
+.Name property of Username input.
+[#img-sunset]
+[caption="Figure 3: ",link=www.link3.com]
+image::images/mythaistar3.jpg[UsernameInputNameProperty]
+
 If we inspect the Username input, we can see there is a _Input_ web element with name property ``name = "username"``. +
 As expected, the password input also has a very descriptive name: ``name="password"``.
 
@@ -294,6 +304,11 @@ private static final By passwordSearch = By.name("password");
 WebElement usernameTextBox = getDriver().findElementDynamic(usernameSearch);
 WebElement passwordTextBox = getDriver().findElementDynamic(passwordSearch);
 ----
+
+.Submit button name property.
+[#img-sunset]
+[caption="Figure 4: ",link=www.link4.com]
+image::images/mythaistar4.jpg[SubmitButtonNameProperty]
 
 Inspecting the submit button reveals another name property in the button: ``name = "submitLogin"``. Then it can be found like this:
 
@@ -371,22 +386,30 @@ public class ThaiLoginPage extends BasePage {
 }
 ----
 
-After logging in, the page should change to Home page and the login button in there should have changed. To verify that we are logged in, let's make a new method in ThaiHomePage called verifyThatUserIsLogged:
+After logging in, the page should change to Home page and the login button in there should have changed. To verify that we are logged in, let's make a new method in ThaiHomePage called verifyThatUserIsLogged. It checks if the login button changed like the one in the image and returns a boolean which is true or false depending on whether or not the icon changed. Notice that now the icon now has ``name = "account"`` as name property, so that's how we will fetch it.
+
+.Name property of the Logged in button.
+[#img-sunset]
+[caption="Figure 5: ",link=www.link5.com]
+image::images/mythaistar5.jpg[LoggedNameProperty]
+
+The method will be the next one:
 
 [source, java]
 ----
  public boolean verifyThatUserIsLogged() {
 
-    WebElement userIsLoggedIcon = getDriver().findElementDynamic(searchLogged);
+    WebElement userIsLoggedIcon = getDriver().findElementDynamic(searchLoggedIcon);
     boolean userIsLogged = userIsLoggedIcon.isDisplayed();
     return userIsLogged;
   }
 ----
+
 Where:
 
 [source, java]
 ----
-private static final By searchLogged = By.name("account");
+private static final By searchLoggedIcon = By.name("account");
 ----
 
 So ThaiHomePage should look like this:
@@ -407,8 +430,8 @@ import com.capgemini.mrchecker.selenium.core.exceptions.BFElementNotFoundExcepti
 public class ThaiHomePage extends BasePage {
 
   private static final String mythaistarUrl = "localhost:4200";
-  private static final By searchLoginButton = By.id("loginButton");
-
+  private static final By searchLoginButton = By.name("login");
+  private static final By searchLoggedIcon = By.name("account");
 
   @Override
   public boolean isLoaded() {
@@ -442,7 +465,7 @@ public class ThaiHomePage extends BasePage {
 
    public boolean verifyThatUserIsLogged() {
 
-    WebElement userIsLoggedIcon = getDriver().findElementDynamic(searchLogged);
+    WebElement userIsLoggedIcon = getDriver().findElementDynamic(searchLoggedIcon);
     boolean userIsLogged = userIsLoggedIcon.isDisplayed();
     return userIsLogged;
   }
@@ -491,19 +514,19 @@ public class MyThaiStarTest extends BaseTest {
   }
 ----
 
-Now you can run your test by running MyThaiStarTest as JUnit, and a browser should open to follow the steps in your test.
+Notice that this time we extend from BaseTest. You can run your test by running MyThaiStarTest as JUnit, and a browser should open to follow the steps in your test.
 
 
 
 
 == Test examples
 
-=== Example of a more complicated test step by step (1)
-Login and book a table.
+=== Example 1
+Login and book a table. The code for this test can be found inside the BookTable folder.
 
-=== Example of a more complicated test step by step (2)
-Login and book a table, then login with a waiter and check if the table was successfully booked.
+=== Example 2
+Login and book a table, then login with a waiter and check if the table was successfully booked. The code for this test can be found inside the BookThenCheck folder.
 
-=== Example of a more complicated test step by step (3)
-Login and order food for a certain booked table.
+=== Example 3
+Login and order food for a certain booked table. The code for this test can be found inside the OrderFood folder.
 
