@@ -153,10 +153,10 @@ private static final String mythaistarUrl = localhost:4200;
 Now we need some actual code to fill the class. Right click on the user icon in the top right corner of the screen and inspect the HTML of that element.
 
 //Image thaistar1
-.Inspect the login icon.
-[caption="Figure 1: "]
-image::mythaistar1.jpg[userLoginIcon]
-
+//.Inspect the login icon.
+//[caption="Figure 1: "]
+//image::mythaistar1.jpg[userLoginIcon]
+image::mythaistar1.jpg[thai]
 
 In the HTML, we can see the icon we clicked is inside a button that has a name property. You want to try too look for either id (unless it's a dynamic id), name or unique classes, but in practice it tends to get harder and you sometimes have to use Xpath or Css Selector.
 
