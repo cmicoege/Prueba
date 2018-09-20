@@ -391,7 +391,7 @@ After logging in, the page should change to Home page and the login button in th
 .Name property of the Logged in button.
 [#img-sunset]
 [caption="Figure 5: ",link=www.link5.com]
-image::images/mythaistar5.jpg[LoggedNameProperty]
+image::./images/mythaistar5.jpg[LoggedNameProperty]
 
 The method will be the next one:
 
