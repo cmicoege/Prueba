@@ -158,14 +158,14 @@ image::https://asciidoctor.org/images/octocat.jpg[GitHub mascot]
 //.Inspect the login icon.
 //[caption="Figure 1: "]
 //image::mythaistar1.jpg[userLoginIcon]
-image::mythaistar1.jpg[thai]
+image::prueba/mythaistar1.jpg[thai]
 
 In the HTML, we can see the icon we clicked is inside a button that has a name property. You want to try too look for either id (unless it's a dynamic id), name or unique classes, but in practice it tends to get harder and you sometimes have to use Xpath or Css Selector.
 
 //Image thaistar2
 .Look for name property.
 [caption="Figure 2: "]
-image::images/mythaistar2.jpg[LoginNameProperty]
+image::prueba/images/mythaistar2.jpg[LoginNameProperty]
 
 In the previous image you can see that our element has as a property: ``name = login``.
 Therefore we want to look for it like this:
