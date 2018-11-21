@@ -1,0 +1,42 @@
+:toc: macro
+toc::[]
+
+= Using MrChecker in Production Line
+If you need to know how to start creating end to end tests using MrChecker, go link:here[https://github.com/devonfw-forge/devon-guide/wiki/mrchecker-mts].
+
+When you have created your end to end tests and they run in local, the next step is trying to run them from a Jenkins pipeline in the Production Line of your project.
+
+= Selenium Grid
+You need Jenkins and Selenium Grid in your Production Line instance to be able to run the tests.
+
+Go to your Jenkins pipeline (Jenkinsfile in your project folder) and add the following stage after both the front and back have been deployed (remember that your tests should include the right Url to your deployed app):
+
+```
+   stage('Run end to end tests') {
+        
+        dir('your_project_directory/') {
+            withMaven(globalMavenSettingsConfig: 'your_Maven_Settings_name', jdk: 'your_java_installation_name', maven: 'your_Maven_installation_name') {
+                sh "mvn test -Dtest=your_test_file -Dbrowser=chrome -DseleniumGrid='your_Selenium_Grid_hub/wd/hub' -Dos=LINUX"
+            }
+        }
+```
+Here, *your_project_directory/* is the folder where your maven pom file is included.
+
+For example, this is the Jenkins stage used in _My Thai Star_:
+
+```
+   stage('Run end to end tests') {
+        
+        dir('mrchecker/endtoend-test/') {
+            withMaven(globalMavenSettingsConfig: 'MavenSettings', jdk: 'Java8', maven: 'Maven3') {
+                sh "mvn test -Dtest=MyThaiStarTest -Dbrowser=chrome -DseleniumGrid='http://selenium-hub-core:4444/wd/hub' -Dos=LINUX"
+            }
+        }
+```
+When your pipeline is built, in the stage your tests will be executed.
+
+
+
+= More information about using Selenium Grid
+If you want want more information about Selenium Grid and how to use MrChecker with it, you will find everything you need in either MrChecker documentation: link:link[https://github.com/devonfw/devonfw-testing/wiki/Selenium-Grid] or Selenium Grid: link:here[https://github.com/SeleniumHQ/selenium] and link:here[http://docs.seleniumhq.org/docs/07_selenium_grid.jsp].
+
