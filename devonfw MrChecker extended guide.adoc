@@ -1,0 +1,150 @@
+:toc: macro
+toc::[]
+
+= MrChecker Selenium Module extended guide
+
+== Introduction
+In this guide we will get into some advanced concepts for using MrChecker Selenium Module to create automated end to end tests.
+
+
+== Structure
+
+The architecture we use is called Page Object Model, which follows the idea of treating every page as an object and all the actions we are going to perform in said page will be methods of it. 
+Typically we create a new class for every page we meet in the user story, but sometimes confirmation pages like the one in the image below can be included in the pages they are included.
+
+//Image confirmation page
+.Inspect the login icon.
+[caption="Figure 1: "]
+image::images/confirmation_page.png[confirmationPage]
+
+This is a good example because it could be considered as a new page, and it might be more well-organized, but considering it as a part of the booking page is also a choice when low amount of classes is desired.
+It could also happen that a method in the page containing our confirmation page was also used in it and we didn't (Wouldn't??) want to duplicate it.
+
+
+Then, we create a test class which calls the previous pages and their methods in order to fulfill the user story.
+
+== Useful methods of BasePage class
+
+When making a page java class, we need to extend BasePage from MrChecker: 
+[source, java]
+----import com.capgemini.mrchecker.selenium.core.BasePage;----
+
+Among other very useful methods, this abstract class has three methods that we need to override:
+
+[source, java]
+----
+  @Override
+  public String pageTitle() {
+
+    return inserePageTitle;
+  }
+----
+
+pageTitle method returns a string passed to it, where that string is normally read from a properties file.
+
+
+[source, java]
+----
+  @Override
+  public boolean isLoaded() {
+
+    return getDriver().getTitle().equals(pageTitle());
+  }
+----
+
+isLoaded method returns [source, java]
+---true--- or false depending on whether or not the page is loaded.
+
+[source, java]
+----
+  @Override
+  public void load() {
+
+    getDriver().manage().window().maximize();
+    getDriver().navigate().to(Url);
+  }
+----
+load method runs if isLoaded returns false. It attempts to load a Url, which is read from a properties file.
+
+
+There are also some useful methods you can use. Some examples are:
+
+`getActualPageTitle()`: This method returns as a _String_ the title of the page. It can be useful to get the title in the test instead of using `getDriver().getTitle()` in the page class.
+
+[source, java]
+----
+  String expectedTitle = "My Page title";
+  HomePage myHomePage = new HomePage();
+  String actualTitle = myHomePage.getActualPageTitle();
+  String errorMessage = "The page's title doesn't match the expected title.";
+  Assert.assertEquals(errorMessage, actualTitle, expectedTitle);
+
+----
+
+`refreshPage()`: This method refreshes the page. Like in the previous method, this is the test class equivalent to another method that can be used inside the page class. In this case it's `getDriver().navigate().refresh();`. It can be used like in the following code block:
+
+[source, java]
+----
+  HomePage myHomePage = new HomePage();
+  myHomePage.refreshPage();
+
+----
+
+`openInNewTab(url)`: This method opens a specified link in a new tab, and then switches to the new tab. It can be useful if you want to conserve the current page while opening a new one, for example to compare any part of them.
+
+[source, java]
+----
+  HomePage myHomePage = new HomePage();
+  String url = "http://www.someurl.com";
+  myHomePage.openInNewTab(url);
+
+----
+
+`isElementDisplayedNoException(By selector)`: This method can be used to check if a certain element is present in a page. It can be used with any _By_, you just need to pass it the proper object.
+
+[source, java]
+----
+  HomePage myHomePage = new HomePage();
+	By selector = By.id("someId");
+	boolean elementIsDisplayed = myHomePage.isElementDisplayedNoException(selector);
+	String errorMessage = "The element is not displayed in the page.";
+	Assert.assertTrue(errorMessage, elementIsDisplayed);
+----
+
+It can also be called as _isElementDisplayedNoException(By selector, WebElement parent)_ if your element doesn't have an unique property like an id or a unique class. For example:
+
+
+
+`isElementDisplayed(By selector)`: There is also this method where the exception isn't handled internally. This method can also be called as _isElementDisplayed(By selector, WebElement parent)_ like the previous method, or as _isElementDisplayed(By selector, String text)_ if you want to check if the element is displayed and it contains a certain text, and it can be used like this:
+
+
+
+
+There is an equivalent method that can be used in page classes, _getDriver().myWebElement.isDisplayed()_, which also doesn't handle the exception and can't get a text parameter.
+
+
+`isUrlAndPageTitleAsCurrentPage(String url)`: This method checks if the url and title of the current page is as expected and returns a boolean. For that, you need to pass the expected Url and to have implemented the _pageTitle()_ method in that page class with the correct expected page title.
+
+
+[source, java]
+----
+  HomePage myHomePage = new HomePage();
+  String url = "http://www.someurl.com";
+	boolean correctUrlAndTitle = myHomePage.isUrlAndPageTitleAsCurrentPage(url);
+	String errorMessage = "The page url or title don't match with the expected ones.";
+	Assert.assertTrue(errorMessage, correctUrlAndTitle);
+----
+
+`navigateBack()`: This method can be used to navigate back to the previous page.
+[source, java]
+----
+  HomePage myHomePage = new HomePage();
+  myHomePage.navigateBack();
+----
+
+It can be called with a boolean parameter _true_ so it waits to make sure the page is loaded.
+
+
+== MrChecker Selenium Module
+
+=== Selenium
