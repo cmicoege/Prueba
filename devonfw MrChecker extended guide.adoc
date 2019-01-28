@@ -31,6 +31,7 @@ When making a page java class, we need to extend BasePage from MrChecker:
 
 Among other very useful methods, this abstract class has three methods that we need to override:
 
+- `pageTitle()`:  This method returns a string passed to it, where that string is normally read from a properties file. It has to be implemented like this:
 [source, java]
 ----
   @Override
@@ -40,9 +41,8 @@ Among other very useful methods, this abstract class has three methods that we n
   }
 ----
 
-pageTitle method returns a string passed to it, where that string is normally read from a properties file.
 
-
+- `isLoaded()`: This method returns _true_ or _false_ depending on whether or not the page is loaded. It has to be implemented like this:
 [source, java]
 ----
   @Override
@@ -52,8 +52,7 @@ pageTitle method returns a string passed to it, where that string is normally re
   }
 ----
 
-isLoaded method returns [source, java]
----true--- or false depending on whether or not the page is loaded.
+- `load()`: This method runs if isLoaded returns false. It attempts to load a Url, which is read from a properties file. It has to be implemented like this:
 
 [source, java]
 ----
@@ -64,12 +63,11 @@ isLoaded method returns [source, java]
     getDriver().navigate().to(Url);
   }
 ----
-load method runs if isLoaded returns false. It attempts to load a Url, which is read from a properties file.
 
 
 There are also some useful methods you can use. Some examples are:
 
-`getActualPageTitle()`: This method returns as a _String_ the title of the page. It can be useful to get the title in the test instead of using `getDriver().getTitle()` in the page class.
+- `getActualPageTitle()`: This method returns as a _String_ the title of the page. It can be useful to get the title in the test instead of using `getDriver().getTitle()` in the page class.
 
 [source, java]
 ----
@@ -81,7 +79,7 @@ There are also some useful methods you can use. Some examples are:
 
 ----
 
-`refreshPage()`: This method refreshes the page. Like in the previous method, this is the test class equivalent to another method that can be used inside the page class. In this case it's `getDriver().navigate().refresh();`. It can be used like in the following code block:
+- `refreshPage()`: This method refreshes the page. Like in the previous method, this is the test class equivalent to another method that can be used inside the page class. In this case it's `getDriver().navigate().refresh();`. It can be used like in the following code block:
 
 [source, java]
 ----
@@ -90,7 +88,7 @@ There are also some useful methods you can use. Some examples are:
 
 ----
 
-`openInNewTab(url)`: This method opens a specified link in a new tab, and then switches to the new tab. It can be useful if you want to conserve the current page while opening a new one, for example to compare any part of them.
+- `openInNewTab(url)`: This method opens a specified link in a new tab, and then switches to the new tab. It can be useful if you want to conserve the current page while opening a new one, for example to compare any part of them.
 
 [source, java]
 ----
@@ -100,7 +98,7 @@ There are also some useful methods you can use. Some examples are:
 
 ----
 
-`isElementDisplayedNoException(By selector)`: This method can be used to check if a certain element is present in a page. It can be used with any _By_, you just need to pass it the proper object.
+- `isElementDisplayedNoException(By selector)`: This method can be used to check if a certain element is present in a page. It can be used with any _By_, you just need to pass it the proper object.
 
 [source, java]
 ----
@@ -115,7 +113,7 @@ It can also be called as _isElementDisplayedNoException(By selector, WebElement 
 
 
 
-`isElementDisplayed(By selector)`: There is also this method where the exception isn't handled internally. This method can also be called as _isElementDisplayed(By selector, WebElement parent)_ like the previous method, or as _isElementDisplayed(By selector, String text)_ if you want to check if the element is displayed and it contains a certain text, and it can be used like this:
+- `isElementDisplayed(By selector)`: There is also this method where the exception isn't handled internally. This method can also be called as _isElementDisplayed(By selector, WebElement parent)_ like the previous method, or as _isElementDisplayed(By selector, String text)_ if you want to check if the element is displayed and it contains a certain text, and it can be used like this:
 
 
 
@@ -123,7 +121,7 @@ It can also be called as _isElementDisplayedNoException(By selector, WebElement 
 There is an equivalent method that can be used in page classes, _getDriver().myWebElement.isDisplayed()_, which also doesn't handle the exception and can't get a text parameter.
 
 
-`isUrlAndPageTitleAsCurrentPage(String url)`: This method checks if the url and title of the current page is as expected and returns a boolean. For that, you need to pass the expected Url and to have implemented the _pageTitle()_ method in that page class with the correct expected page title.
+- `isUrlAndPageTitleAsCurrentPage(String url)`: This method checks if the url and title of the current page is as expected and returns a boolean. For that, you need to pass the expected Url and to have implemented the _pageTitle()_ method in that page class with the correct expected page title.
 
 
 [source, java]
@@ -135,7 +133,7 @@ There is an equivalent method that can be used in page classes, _getDriver().myW
 	Assert.assertTrue(errorMessage, correctUrlAndTitle);
 ----
 
-`navigateBack()`: This method can be used to navigate back to the previous page.
+- `navigateBack()`: This method can be used to navigate back to the previous page.
 [source, java]
 ----
   HomePage myHomePage = new HomePage();
