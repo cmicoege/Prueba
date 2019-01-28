@@ -158,14 +158,14 @@ image::https://asciidoctor.org/images/octocat.jpg[GitHub mascot]
 //.Inspect the login icon.
 //[caption="Figure 1: "]
 //image::mythaistar1.jpg[userLoginIcon]
-image::prueba/mythaistar1.jpg[thai]
+image::prueba/mythaistar1.png[thai]
 
 In the HTML, we can see the icon we clicked is inside a button that has a name property. You want to try too look for either id (unless it's a dynamic id), name or unique classes, but in practice it tends to get harder and you sometimes have to use Xpath or Css Selector.
 
 //Image thaistar2
 .Look for name property.
 [caption="Figure 2: "]
-image::prueba/images/mythaistar2.jpg[LoginNameProperty]
+image::prueba/images/mythaistar2.png[LoginNameProperty]
 
 In the previous image you can see that our element has as a property: ``name = login``.
 Therefore we want to look for it like this:
@@ -308,7 +308,7 @@ WebElement passwordTextBox = getDriver().findElementDynamic(passwordSearch);
 .Submit button name property.
 [#img-sunset]
 [caption="Figure 4: ",link=www.link4.com]
-image::images/mythaistar4.jpg[SubmitButtonNameProperty]
+image::images/mythaistar4.png[SubmitButtonNameProperty]
 
 Inspecting the submit button reveals another name property in the button: ``name = "submitLogin"``. Then it can be found like this:
 
@@ -391,7 +391,7 @@ After logging in, the page should change to Home page and the login button in th
 .Name property of the Logged in button.
 [#img-sunset]
 [caption="Figure 5: ",link=www.link5.com]
-image::./images/mythaistar5.jpg[LoggedNameProperty]
+image::./images/mythaistar5.png[LoggedNameProperty]
 
 The method will be the next one:
 
