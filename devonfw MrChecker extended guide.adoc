@@ -26,8 +26,13 @@ Then, we create a test class which calls the previous pages and their methods in
 == Useful methods of BasePage class
 
 When making a page java class, we need to extend BasePage from MrChecker: 
-[source, java]
-----import com.capgemini.mrchecker.selenium.core.BasePage;----
+[source, java]----
+import com.capgemini.mrchecker.selenium.core.BasePage;
+public class HomePage extends BasePage {
+  // ...
+}
+
+----
 
 Among other very useful methods, this abstract class has three methods that we need to override:
 
