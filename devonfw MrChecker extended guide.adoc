@@ -15,18 +15,20 @@ Typically we create a new class for every page we meet in the user story, but so
 //Image confirmation page
 .Inspect the login icon.
 [caption="Figure 1: "]
-image::images/confirmation_page.PNG[confirmationPage]
+image::images/confirmation_page.png[confirmationPage]
 
 This is a good example because it could be considered as a new page, and it might be more well-organized, but considering it as a part of the booking page is also a choice when low amount of classes is desired.
 It could also happen that a method in the page containing our confirmation page was also used in it and we didn't (Wouldn't??) want to duplicate it.
 
 
-Then, we create a test class which calls the previous pages and their methods in order to fulfill the user story.
+Then, we create a Test class which calls the previous pages and their methods in order to fulfill the user story.
 
 == Useful methods of BasePage class
 
-When making a page java class, we need to extend BasePage from MrChecker: 
-[source, java]----
+When making a Page java class, we need to extend BasePage from MrChecker: 
+
+[source, java]
+----
 import com.capgemini.mrchecker.selenium.core.BasePage;
 public class HomePage extends BasePage {
   // ...
@@ -42,7 +44,7 @@ Among other very useful methods, this abstract class has three methods that we n
   @Override
   public String pageTitle() {
 
-    return inserePageTitle;
+    return yourPageTitle;
   }
 ----
 
@@ -68,6 +70,9 @@ Among other very useful methods, this abstract class has three methods that we n
     getDriver().navigate().to(Url);
   }
 ----
+
+There is a special method we will be using all the time: `getDriver()`, which returns a INewWebDriver object, MrChecker's variant for WebDriver objects.
+We will talk about it in the following section.
 
 
 There are also some useful methods you can use. Some examples are:
@@ -146,6 +151,128 @@ There is an equivalent method that can be used in page classes, _getDriver().myW
 ----
 
 It can be called with a boolean parameter _true_ so it waits to make sure the page is loaded.
+
+
+== BaseTest class
+
+Typically you divide your tests in test suites. Each test suite can be suited in one Test class including several methods with *@Test* tag that will be run when running your Test class as Junit. 
+
+
+First, your Test class needs to extend BaseTest from MrChecker. Like with BasePage, you have to override two classes:
+
+- `setUp()`: This method will be executed before starting to run the tests. Here you use the load method of the first Page in your tests. Don't forget to make your Page instance.
+
+[source, java]
+----
+public class MyThaiStarTest extends BaseTest {
+
+  private HomePage myHomePage = new HomePage();
+    @Override
+    public void setUp() {
+
+      myHomePage.load();
+    }
+----
+
+- `tearDown()`: This method will be executed after the tests are run, but before closing the browser. You can use it to add a wait after all tests are run, or to do any other specific action after tests are run.
+
+[source, java]
+----
+  @Override
+  public void tearDown() {
+    try{
+      int duration = 2000;
+      TimeUnit.MILLISECONDS.sleep(time);
+    } catch (InterruptedException e) {
+
+      System.out.println(e);
+    }
+  }
+----
+
+Then you add your test methods. Remember that they won't run in the order they are in your class, to set a specific order you need to add an annotation before your Test class:
+`@FixMethodOrder(MethodSorters.JVM)` if you want to run them in the order they show in the class.
+
+`@FixMethodOrder(MethodSorters.NAME_ASCENDING)` if you want to run them in alphabetic order.
+
+
+After that, in each Test method in the Test class you run the page methods to build the path described in the test case.
+Below there is an example of a Test method using three pages: "HomePage", "ShopPage" and "ShoppingCartPage", where we add a product to our shopping cart, and then check out and verify if the page is asking for a payment method.
+
+Notice that every assert has an error message; this can be very useful when trying to find out what fails after for example adding a new functionality to a Web application.
+
+[source, java]
+----
+  @Test
+  public void Test_BuyProduct(String productName) {
+
+    ShopPage myShopPage = this.myHomePage.goToShopPage();
+    myShopPage.addToCartAProductInTheShop(productName);
+    ShoppingCartPage myCartPage = myShopPage.goToShoppingCart();
+    boolean productWasAdded = myCartPage.checkIfProductWasAdded(productName);
+    String shoppingCartErrorMessage = "The product wasn't added to Shopping Cart."
+    Assert.assertTrue(shoppingCartErrorMessage, productWasAdded);
+    myCartPage.checkout();
+    boolean pageAsksForPaymentMethods = myCartPage.verifyPageAsksForPaymentMethod();
+    String paymentMethodsErrorMessage = "The Payment methods dialog isn't displayed in the page."
+    Assert.assertTrue(paymentMethodsErrorMessage, pageAsksForPaymentMethods);
+  }
+----
+
+
+== Common exceptions raised
+
+- *BFElementNotFoundException*: The most common exception, this one is found when the element isn't in the page. Most of the time it's either a typo or that an WebElement in the DOM had that property changed since the last test run.
+
+- *StaleElementReferenceException*: This exception happens when we defined a WebElement, but then the page was changed and we tried to interact with the same WebElement, which isn't there anymore. 
+It happens no matter if the new page has a WebElement which fulfills the same criteria or not. To solve it you have to either cast the WebElement again or define a new WebElement searching it with the correct criteria, depending on whether or not there is an elemenet which fulfills the criteria.
+
+- *WebDriverException: unknown error*: By far the most annoying exception we have found. In most of the cases it's caused by either a popup or some kind of element hiding the element you want to click. 
+For example in My Thai Star's home page if you click the login button, everything other than the login dialog get obscured, the following image shows it:
+
+
+.Inspect the login icon.
+[caption="Figure 2: "]
+image::images/webdriverException2.png[webdriverException1]
+
+Therefore if you try to click any element outside the dialog you get this error with a log like the following one:
+
+
+
+[source, java]
+----
+org.openqa.selenium.WebDriverException: unknown error: Element <button _ngcontent-c2="" mat-icon-button="" name="login" class="mat-icon-button ng-star-inserted" aria-describedby="cdk-describedby-message-2" cdk-describedby-host="" style="touch-action: none; user-select: none; -webkit-user-drag: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0);">...</button> is not clickable at point (1054, 32). Other element would receive the click: <div class="cdk-overlay-backdrop cdk-overlay-dark-backdrop cdk-overlay-backdrop-showing"></div>
+----
+
+This exception can also be caused if you try to interact with an element that isn't reachable for some reason. For example, in My Thai Star we found this in the following screen:
+
+
+
+.Inspect the login icon.
+[caption="Figure 3: "]
+image::images/webdriverException2.png[webdriverException2]
+
+You can see in the image that the checkbox of the Angular sidenav exists even if it's not visible, so if you try to click that checkbox it will raise this exception too, as the element can't be clicked. In this case, it's very likely that either you are clicking the wrong element or you need to do something else to access to that element, like opening the sidenav.
+If this keeps happening even if you do that, you can try using JavascriptExecutor:
+
+[source, java]
+----
+  WebElement checkbox = getDriver().findElement(By.className("mat-checkbox-inner-container"));
+  JavascriptExecutor js = (JavascriptExecutor) getDriver();
+  js.executeScript("arguments[0].click()", checkbox);
+----
+
+
+
+== getDriver() and INewWebDriver's methods.
+
+In selenium you access to the content in a page using a "WebDriver" object. With MrChecker in order to do that you need to call getDriver method, which returns a INewWebDriver object in singleton pattern.
+INewWebDriver extends WebDriver, so all the methods used for classic WebDriver can be used for the object returned by getDriver method.
+
+It's used inside page classes, where most of the actual actions will take place (for example a method that uses getDriver to enter some credentials in a login and then submit)
+
+Some of the methods that can be used with INewWebDriver objects are:
+
 
 
 == MrChecker Selenium Module
