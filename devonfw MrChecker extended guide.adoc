@@ -4,7 +4,7 @@ toc::[]
 = MrChecker Selenium Module extended guide
 
 == Introduction
-In this guide we will get into some advanced concepts for using MrChecker Selenium Module to create automated end to end tests.
+In this guide we will get into some advanced concepts for using MrChecker Selenium Module to create automated end to end tests. link:https://github.com/devonfw/devon/wiki/mrchecker-mts[Here] you can find a step by step guide on how to make a basic test.
 
 
 == Structure
@@ -23,7 +23,7 @@ It could also happen that a method in the page containing our confirmation page 
 
 Then, we create a Test class which calls the previous pages and their methods in order to fulfill the user story.
 
-== Useful methods of BasePage class
+=== Useful methods of BasePage class
 
 When making a Page java class, we need to extend BasePage from MrChecker: 
 
@@ -153,7 +153,7 @@ There is an equivalent method that can be used in page classes, _getDriver().myW
 It can be called with a boolean parameter _true_ so it waits to make sure the page is loaded.
 
 
-== BaseTest class
+=== BaseTest class
 
 Typically you divide your tests in test suites. Each test suite can be suited in one Test class including several methods with *@Test* tag that will be run when running your Test class as Junit. 
 
@@ -220,7 +220,7 @@ Notice that every assert has an error message; this can be very useful when tryi
 ----
 
 
-== Common exceptions raised
+=== Common exceptions raised
 
 - *BFElementNotFoundException*: The most common exception, this one is found when the element isn't in the page. Most of the time it's either a typo or that an WebElement in the DOM had that property changed since the last test run.
 
@@ -264,7 +264,7 @@ If this keeps happening even if you do that, you can try using JavascriptExecuto
 
 
 
-== getDriver() and INewWebDriver's methods.
+=== getDriver() and INewWebDriver's methods
 
 In selenium you access to the content in a page using a "WebDriver" object. With MrChecker in order to do that you need to call getDriver method, which returns a INewWebDriver object in singleton pattern.
 INewWebDriver extends WebDriver, so all the methods used for classic WebDriver can be used for the object returned by getDriver method.
@@ -274,7 +274,52 @@ It's used inside page classes, where most of the actual actions will take place 
 Some of the methods that can be used with INewWebDriver objects are:
 
 
+* **findElementDynamic**: Tries to find an element by a speficied criterion. It expects a By object as argument, and returns a WebElement object. It can be used like this:
 
-== MrChecker Selenium Module
+[source, java]
+----
+By searchElement = By.someCriterion(criterion);
+getDriver().findElementDynamic(searchElement);
+----
 
-=== Selenium
+This method has an implicit wait included in it, unlike Selenium's _findElement_, so it will try to wait for the element to show up and if that never happens it will raise an exception after waiting for 20 seconds.
+
+* Some workable **By** types:
+** **By.name(someName)**
+** **By.tagName(someTagName)**: For example ``By.tagName("div")`` or ``By.tagName("button")``.
+** **By.className(someClassName)**: For example ``By.className("mat-checkbox")``.
+** **By.id(someId)**
+** **By.cssSelector(someCssSelector)**: For example ``By.cssSelector("button.mat-icon-button:nth-child(6)")`` or ``By.cssSelector("input[formcontrolname='email']")``.
+** **By.xpath(someXpath)**: For example: ``By.xpath("//button[@class='text-upper property-text-bold mat-button mat-accent']")``.
+
+* **findElementDynamics**: Unlike the previous method, this one returns a list of WebElements. It's useful when two elements share the same class or a certain property and you need to stock both of them. It raises an exception if no elements are found.
+
+* **findElementQuietly**: Used in the same way as **findElementDynamic**, but this one doesn't raise an exception if element isn't found.
+
+
+=== WebElement's methods
+
+_findElement_ and its variants return a WebElement object. We interact with those objects using some methods. This is not a MrChecker version but the Selenium class itself so this time there aren't any new methods to talk about, just the regular methods used in Selenium. Among others, you can use:
+
+
+* **myWebElement.click()**: It performs a click in the web element specified, as if the user was performing the click.
+
+* **myWebElement.sendKeys(someString)**: It takes a string as argument and tries to type those keys in the web element. It's typically used to fill inputs, but it can be used to send specific keys like *Enter* or *Backspace*, so it can be used to activate a button (by using Enter) like if we were clicking it.
+
+* **myWebElement.getAttribute(attributeName)**: It returns the value of that attribute.
+
+* **myWebElement.getText()**: Returns ALL the text contained in that Web element.
+
+* **findElement** or **findElements**: You can try to find elements inside of a particular element. While this might sound weird, think of it as trying to locate a certain button inside of a div container, for example. Here you can't use MrChecker's _findElementDynamic_ version of the method, as it's not defined for WebElements.
+
+
+
+== Using tests from Jenkins
+
+In order to run the tests, we have been doing it in a Jenkins container in Production line, by using a mvn test command (in the folder that contains the pom file, as usual) and making it run the test in a Selenium grid (which your Production Line instance should have). For this you need the Url of your Web Application to included either in your settings.properties file inside your test project or change the properties file from your Jenkinsfile 
+You can read more about this link:https://github.com/devonfw/devon/wiki/mrchecker-in-production-line[here].
+
+
+Also you can find link:https://km3.capgemini.com/book/1093707[here] a more extense guide on how to use it from Production Line with Allure reports.
+
+
