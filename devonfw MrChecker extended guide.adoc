@@ -15,7 +15,7 @@ Typically we create a new class for every page we meet in the user story, but so
 //Image confirmation page
 .Inspect the login icon.
 [caption="Figure 1: "]
-image::images/confirmation_page.png[confirmationPage]
+image::images/confirmation_page.PNG[confirmationPage]
 
 This is a good example because it could be considered as a new page, and it might be more well-organized, but considering it as a part of the booking page is also a choice when low amount of classes is desired.
 It could also happen that a method in the page containing our confirmation page was also used in it and we didn't (Wouldn't??) want to duplicate it.
