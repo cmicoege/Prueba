@@ -1,0 +1,176 @@
+Escribiremos como ||f||_inf la norma del supremo de f \in c(I_n).
+en general, ||E||_inf sera el maximo de una funcion en su dominio.
+
+El espacio finito de medidas de borel regulares en I_n lo denotaremos como M(I_n).
+
+[R2] tiene mas detalles de esto.
+
+El objetivo es investigar las condiciones para las que las sumas de la forma G(x)=asdasd
+
+son densas en C(I_n) respecto de la norma del supremo.
+
+
+Definicion1: Diremos que \sigma es \textit{discriminatorio} si para una medida \mu \in M(I_n)
+
+integral 
+
+para todo y \in R^n y \theta \in R, entonces necesariamente \mu=0.
+
+
+
+Definicion2: Diremos que \sigma es \textit{sigmoidal} si:
+
+expresion
+
+
+
+Theorem1: Sea \sigma una funcion discriminatoria continua. Entonces las sumas finitas de la forma:
+
+G(x)= asd
+
+son densas en C(I_n). En otras palabras, dado f \in C(I_n) y \varepsilon>0, hay una suma G(x) de la forma descrita, para la cual:
+
+|G(x) - f(x)|<\varepsilon para todo x\in I_n
+
+
+Demostracion:
+
+Sea S c(en) C(I_n) el conjunto de las funciones de la forma G(x) como en \ref{asd}. Obviamente \textit{S} es un subespacio vectorial de C(I_n).
+Necesitaremos saber que la clausura de \textit{S} coincide con el propio conjunto C(I_n).
+
+Procederemos por reduccion al absurdo:
+Supongamos que la clausura de S no es C(I_n). Entonces la clausura de S, llamemosla \textit{R}, es un subespacio cerrado de C(I_n).
+Por el teorema de Hahn-Banach, existe un operador lineal acotado en C(I_n), \textit{L}, con la propiedad de que L !=0 pero L(R)=L(S)=0.
+
+Por el teorema de representacion de Riesz, este operador lineal acotado L debe ser de la forma:
+
+L(h)= integral bla
+
+
+para algun \mu \in M(I_n), para todo h \in C(I_n). En particular, como \sigma(y^Tx + \theta) estca en R para todo y y \theta, sera cierta la igualdad siguiente:
+
+integral(sigmabla)=0
+
+para todo y y \theta.
+
+
+
+Sin embargo, hemos asumido que \sigma era discriminatorio, de mod que esa condicion implica que \mu = 0, contradiciendo la hipotesis.
+Por tanto, R = C(I_n) y el subespacio \textit{S} debe ser denso en C(I_n). [x]
+
+
+Esto demuestra que las sumas de la forma 
+G(x)=asd
+
+son densas en C(I_n) siempre que \sigma sea discriminatoria y continua.
+
+
+%%El argumento usado es bastante general y puede ser aplicado a otros casos como discutiremos posteriormente.
+
+Ahora, [especializaremos] este resultado para mostrar que cualquier funcion sigmoidal \sigma de la forma discutida en \ref{definicion2} :
+
+\sigma(t) -> blabla
+
+es discriminatoria. Notese que en las aplicaciones en redes neuronales, las funciones de activacion sigmoidales son tipicamente monotonas crecientes, pero la monotonia aqui no sera una condicion necesaria.
+
+
+Lema1: Cualquier funcion sigmoidal medible y acotada \sigma es discriminatoria. En particular, cualquier funcion sigmoidal continua es discriminatoria.
+
+Demostracion: Para demostrar el lema, observese que para cualquier x, y, \theta, \phi, tenemos:
+
+expresion1
+
+
+Por tanto, la sucesion de funciones {\sigma_{\lambda}(x)=\sigma(\lambda(y^Tx + \theta) + \phi)}_{\lambda \in N}} converge puntualmente a la funcion siguiente: 
+
+,y,(x){ asdasd
+
+
+ademas, ,y, acota superiormente a la sucesion de funciones.
+
+
+Sea el hiperplano \Pi_{y,\theta} := {x|y^Tx + \theta > 0}. Entonces por el teorema de convergencia dominada tenemos que:
+
+0= ---- = ---= asdas
+
+
+para todo \phi, \theta, y.
+
+
+Ahora probaremos que el hecho de que la medida de todos los semiplanos sea 0 implica que la medida \mu debe ser 0.
+
+Fijemos y. Para una funcion acotada y medible \textit{h} definimos el operador lineal \textit{F} de la siguiente manera:
+
+F(h)=...
+
+y notese que \textit{F} es un operador acotado en L^\inf(R) al ser \mu una medida finita con signo.
+Sea \textit{h} la funcion caracteriastica del intervalo [\theta, \inf) (es decir, h(u)=1 si u\geq \theta y h(u)=0 si u<\theta), de manera que:
+
+F(h) = ..........................=0
+
+
+De una manera similar, tambien se deduce F(h)=0 si \textit{h} es una funcion caracteristica del intervalo abierto (\theta, \inf).
+Por linearidad, F(h)=0 por la funcion caracteristicade cualquier intervalo y por tanto para cualquier funcion simple (es decir, una funcion que sea la suma de funciones caracteristica de intervalos).
+Como las funciones simples son densas en L^\inf(R) (pagina 90 de [A]), tenemos que F=0.
+
+
+En particular, las funciones acotadas y medibles s(u)=sin(m\cdot u) y c(u)=cos(m\cdot u) dan:
+
+F(s + ic) =asda = asd=0
+
+para todo m. Por tanto, la transformada de Fourier de \mu es 0 y \mu debe ser cero tambien [R2, p 176]. Y concluimos que \sigma es discriminatoria.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[[ 3.6709609  -7.51181221  6.37391806  6.93944216 -0.84748846 -0.59043372 1.72521544 -8.7625103   3.29436731 -4.29168367]
+ [-7.56841135  4.50837517 -1.8801173   1.79419899 -3.36100459  0.98780274
+  -4.37569094  5.75432587  1.88503683  2.255476  ]
+ [-4.54015732 -0.7716707   2.35885167  2.85428691 -3.67453527 -0.04764771
+  -5.28360605  5.50288868  1.80377543  1.79780865]
+ [-6.06975317 -6.5032692   2.11936045  1.06550908  7.05225182 -2.69061732
+  -2.9742682   0.67737329  0.98437011  6.33901501]
+ [-3.60698986  1.04523182  2.67372394  5.84358978 -7.24870443  2.69691944
+   1.27797508 -0.51390791 -0.56137407 -1.60648298]
+ [-3.10133266 -3.03817844  0.43733394 -0.23429826  3.53435087 -0.88100529
+   3.06843257  1.26391768 -1.67771339  0.62848264]
+ [ 8.1289587  -6.45890093  3.29388356  5.1994524  -7.04785252  4.97663069
+  -3.74056506 -1.6503787   5.04806757 -7.749331  ]
+ [-5.78285027 -4.6069994  -1.67841804 -0.11665691  6.38741112  0.46634001
+  -2.15355968  0.28404915  2.51592588  4.68473101]
+ [ 0.20947126 -8.81142235  3.77918863  4.23248816 -1.24990737  0.0735321
+  -7.20505667  5.37671947  3.09287882  0.50209284]]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
